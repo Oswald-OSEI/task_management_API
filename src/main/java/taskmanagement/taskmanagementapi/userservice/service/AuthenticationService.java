@@ -43,6 +43,14 @@ public class AuthenticationService {
             throw new InvalidUserCredentialException("invalid username or password");
         }
     }
+    public String getNewAccessToken(String refreshToken){
+        if(tokenService.validateToken(refreshToken, refreshSecretString).isValid()){
+            return tokenService.generateAccessToken(tokenService.extractId(refreshToken, refreshSecretString), tokenService.extractUsername(refreshToken, refreshSecretString));
+        }
+        else{
+            throw new InvalidAuthorizationHeaderException("invalid refresh token");
+        }
+    }
 
 
 }
