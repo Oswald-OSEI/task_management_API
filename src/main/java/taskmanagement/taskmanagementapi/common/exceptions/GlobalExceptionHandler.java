@@ -4,12 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import taskmanagement.taskmanagementapi.common.dto.ErrorResponseDto;
 import taskmanagement.taskmanagementapi.taskmanagementservice.exception.TaskCreationException;
 import taskmanagement.taskmanagementapi.taskmanagementservice.exception.TaskManagementException;
 import taskmanagement.taskmanagementapi.taskmanagementservice.exception.TaskOperationAuthorizationException;
 import taskmanagement.taskmanagementapi.userservice.exceptions.InvalidUserCredentialException;
 import taskmanagement.taskmanagementapi.userservice.exceptions.SignUpException;
+
+import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -47,6 +50,19 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TaskManagementException.class)
     public ResponseEntity<ErrorResponseDto> handleTaskManagementException(TaskManagementException e) {
         return new ResponseEntity<>(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception, WebRequest webRequest) {
+
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                exception.getMessage()
+
+        );
+
+        return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
