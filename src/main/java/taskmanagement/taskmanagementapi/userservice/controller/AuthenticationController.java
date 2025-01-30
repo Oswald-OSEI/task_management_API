@@ -31,8 +31,15 @@ public class AuthenticationController {
                 )
         );
     }
-
-
-    
+    @PostMapping("token/refresh")
+    public ResponseEntity<ApiResponseDto<?>> refreshAccesssToken(@RequestBody AccessTokenRequest request){
+        return ResponseEntity.ok(
+                new ApiResponseDto<>(
+                        HttpStatus.OK.value(),
+                        "new token created successfully",
+                        authenticationService.getNewAccessToken(request.getRefreshToken())
+                )
+        );
+    }
 
 }
